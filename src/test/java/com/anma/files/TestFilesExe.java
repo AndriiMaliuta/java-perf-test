@@ -11,11 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+class TestFilesExe {
 
-class TestFilesTest {
-
-    Logger logger = LoggerFactory.getLogger(TestFilesTest.class);
+    Logger logger = LoggerFactory.getLogger(TestFilesExe.class);
     StringBuilder builder = new StringBuilder();
     Stopwatch stopwatch = Stopwatch.createStarted();
 

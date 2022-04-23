@@ -8,7 +8,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Base64;
 
-public class HttpTest {
+public class HttpExe {
 
     public static void testHttp() {
         var url = "https://marketplace.atlassian.com/rest/2/vendors/1216206/reporting/sales/transactions?limit=30";
@@ -30,6 +30,7 @@ public class HttpTest {
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println(response.body());
+
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }

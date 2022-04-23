@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class TestFiles {
+public class FilesExe {
     public static void testFiles() {
         for (int i = 1; i < 200; i++) {
             try {

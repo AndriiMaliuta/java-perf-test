@@ -1,7 +1,6 @@
 package com.anma;
 
-import com.anma.sql.DBTest;
-import com.anma.web.ScrapeTest;
+import com.anma.web.ScrapeExe;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -11,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
         var start = Instant.now();
         try {
-            ScrapeTest.scrape();
+            ScrapeExe.scrape();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
