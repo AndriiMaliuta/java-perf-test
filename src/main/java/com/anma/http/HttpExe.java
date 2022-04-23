@@ -12,8 +12,7 @@ public class HttpExe {
 
     public static void testHttp() {
         var url = "https://marketplace.atlassian.com/rest/2/vendors/1216206/reporting/sales/transactions?limit=30";
-//        var tokenStr = String.format("quadr988@gmail.com:%s", System.getenv("ATLAS_TOKEN"));
-        var tokenStr = "quadr988@gmail.com:blPz2E6KDXpfFr6pU4hM59C9";
+        var tokenStr = String.format("quadr988@gmail.com:%s", System.getenv("ATLAS_TOKEN"));
         var token = Base64.getEncoder().encode(tokenStr.getBytes());
         String header1 = String.format("Basic %s", new String(token));
         System.out.println(header1);
