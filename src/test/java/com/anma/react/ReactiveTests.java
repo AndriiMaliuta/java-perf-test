@@ -8,17 +8,15 @@ import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import io.r2dbc.postgresql.api.PostgresqlConnection;
 import io.r2dbc.postgresql.api.PostgresqlResult;
 import io.r2dbc.postgresql.api.PostgresqlStatement;
-import io.r2dbc.spi.Connection;
-import io.r2dbc.spi.ConnectionFactories;
-import io.r2dbc.spi.ConnectionFactory;
-import io.r2dbc.spi.ConnectionFactoryOptions;
+import io.r2dbc.spi.*;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.naming.ldap.ControlFactory;
-import java.sql.Statement;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -116,13 +114,34 @@ public class ReactiveTests {
         ConnectionPool pool = new ConnectionPool(configuration);
 
         Mono<Connection> connection = pool.create();
-        connection.map(con -> con.createStatement("select * from comments").execute()).doOnNext(System.out::println).subscribe();
+//        connection.map(con -> con.createStatement("select * from comments").execute());
+        connection.doOnNext(c -> {
+            Statement statement = c.createStatement("select * from comments");
+            Publisher<? extends Result> execute = statement.execute();
+
+        }).subscribe();
 
 //        Connection connection = …;
 //        Mono<Void> release = connection.close(); // released the connection back to the pool
 
 // application shutdown
         pool.dispose();
+    }
+
+    @Test
+    void r2Off() {
+        ConnectionFactory connectionFactory = ConnectionFactories
+                .get("r2dbc:postgresql://jqnqjfrd:" + System.getenv("ELEPH_PASS") + "@" + System.getenv("PSQL_HOST") + "/jqnqjfrd");
+
+        Mono.from(connectionFactory.create())
+                .flatMapMany(connection -> connection
+                        .createStatement("SELECT * FROM comments WHERE id = $1")
+                        .bind("$1", 10)
+                        .execute())
+                .flatMap(result -> result
+                        .map((row, rowMetadata) -> row.get("body", String.class)))
+                .doOnNext(System.out::println)
+                .subscribe();
     }
 
 
