@@ -74,7 +74,6 @@ public class ReactiveTests {
 
     @Test
     void createCommentsSpi() {
-
         ConnectionFactory factory = ConnectionFactories.get(ConnectionFactoryOptions.builder()
                 .option(DRIVER, "pool")
                 .option(PROTOCOL, "postgresql") // driver identifier, PROTOCOL is delegated as DRIVER by the pool.
@@ -86,9 +85,8 @@ public class ReactiveTests {
                 .build());
 
         Publisher<?extends Connection> pooledConnectionFactory = factory.create();
-//        Mono<Connection> connectionMono = Mono.from(pooledConnectionFactory.create());
-
-//        pooledConnectionFactory.subscribe(con -> con);
+        Mono<Connection> connectionMono = Mono.from(pooledConnectionFactory);
+        connectionMono.map(c -> c.isAutoCommit()).doOnNext(System.out::println).subscribe();
 
         System.out.println(factory.getMetadata().getName());
 
@@ -128,22 +126,60 @@ public class ReactiveTests {
         pool.dispose();
     }
 
+    class MySubscriber implements Subscriber {
+        @Override
+        public void onSubscribe(Subscription s) {
+            System.out.println("Sub");
+        }
+
+        @Override
+        public void onNext(Object o) {
+            System.out.println("next");
+        }
+
+        @Override
+        public void onError(Throwable t) {
+
+        }
+
+        @Override
+        public void onComplete() {
+
+        }
+    }
     @Test
     void r2Off() {
         ConnectionFactory connectionFactory = ConnectionFactories
                 .get("r2dbc:postgresql://jqnqjfrd:" + System.getenv("ELEPH_PASS") + "@" + System.getenv("PSQL_HOST") + "/jqnqjfrd");
 
+        System.out.println(connectionFactory.getMetadata().getName());
+
+//        connectionFactory.create().subscribe(new MySubscriber().onNext(new String("")));
+
         Mono.from(connectionFactory.create())
                 .flatMapMany(connection -> connection
-                        .createStatement("SELECT * FROM comments WHERE id = $1")
-                        .bind("$1", 10)
+                        .createStatement("SELECT * FROM cats")
+//                        .bind("$1", 10)
                         .execute())
                 .flatMap(result -> result
-                        .map((row, rowMetadata) -> row.get("body", String.class)))
+                        .map((row, rowMetadata) -> {
+                            System.out.println(rowMetadata);
+                            return row.get("body", String.class);
+                        }))
                 .doOnNext(System.out::println)
+                .doOnError(System.out::println)
                 .subscribe();
+
     }
-
-
+    void configureOptions() {
+        ConnectionFactoryOptions options = ConnectionFactoryOptions.builder()
+                .option(ConnectionFactoryOptions.DRIVER, "a-driver")
+                .option(ConnectionFactoryOptions.PROTOCOL, "pipes")
+                .option(ConnectionFactoryOptions.HOST, "localhost")
+                .option(ConnectionFactoryOptions.PORT, 3306)
+                .option(ConnectionFactoryOptions.DATABASE, "my_database")
+                .option(Option.valueOf("locale"), "en_US")
+                .build();
+    }
 
 }

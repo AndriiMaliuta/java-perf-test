@@ -6,7 +6,6 @@ import com.google.gson.GsonBuilder;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
 
 class Cat {
     String name;
@@ -20,7 +19,7 @@ class Cat {
     }
 }
 
-public class JsonTest {
+public class JsonExe {
 
     public static void testJson() {
         Stopwatch stopwatch = Stopwatch.createStarted();

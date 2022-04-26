@@ -7,7 +7,7 @@ import java.util.List;
 
 public class FilesExe {
     public static void testFiles() {
-        for (int i = 1; i < 200; i++) {
+        for (int i = 1; i < 300; i++) {
             try {
                 List<String> strings = Files.readAllLines(Paths.get("/home/andrii/docs/file" + i + ".txt"));
                 System.out.println(strings);
